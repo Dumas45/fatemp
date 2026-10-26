@@ -8,6 +8,7 @@ dependencies = [
     "uvicorn[standard]>=0.30",
     "temporalio>=1.7",
     "pydantic-settings>=2.4",
+    "prometheus-fastapi-instrumentator>=7",
 ]
 
 [tool.uv]

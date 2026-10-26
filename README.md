@@ -14,6 +14,19 @@ docker compose up --build
 
 - API docs: http://localhost:8000/docs
 - Temporal UI: http://localhost:8233
+- Grafana: http://localhost:3000 (anonymous admin access, demo only)
+- Prometheus: http://localhost:9090
+- Loki API: http://localhost:3100
+
+## Observability
+
+`docker compose up` also starts Grafana, Prometheus, Loki and Grafana Alloy. Config lives in [observability/](observability).
+
+- Grafana provisions **Prometheus** (default) and **Loki** datasources, so both are available in *Explore*.
+- Prometheus scrapes the Temporal server (`:9100`), the API (`/metrics`) and both workers (Temporal SDK metrics on `:9464`).
+- Alloy reads all container logs from the Docker socket and pushes them to Loki, labelled with `compose_service`.
+
+Example queries in Explore: LogQL `{compose_service="api"}`, PromQL `rate(http_requests_total[1m])`.
 
 Application logs are written to stderr with timestamps, severity, and logger names.
 Set `LOG_LEVEL` in `.env` to `DEBUG`, `INFO` (default), `WARNING`, `ERROR`, or `CRITICAL`.

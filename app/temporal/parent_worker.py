@@ -7,6 +7,7 @@ from temporalio.worker import Worker
 from app.config import settings
 from app.logging_config import configure_logging
 from app.temporal.activities import prepare_data
+from app.temporal.runtime import create_runtime
 from app.temporal.workflows import ParentWorkflow
 
 logger = logging.getLogger(__name__)
@@ -20,7 +21,9 @@ async def main() -> None:
         settings.temporal_namespace,
     )
     client = await Client.connect(
-        settings.temporal_address, namespace=settings.temporal_namespace
+        settings.temporal_address,
+        namespace=settings.temporal_namespace,
+        runtime=create_runtime(),
     )
     logger.info("Connected to Temporal")
     worker = Worker(

@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
+from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel, Field
 from temporalio.client import Client
 
@@ -35,6 +36,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="FastAPI + Temporal demo", lifespan=lifespan)
+Instrumentator().instrument(app).expose(app, include_in_schema=False)
 
 CurrentUser = Annotated[str, Depends(get_current_user)]
 
