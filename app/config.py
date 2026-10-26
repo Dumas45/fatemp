@@ -1,4 +1,8 @@
+import logging
+
 from pydantic_settings import BaseSettings
+
+logger = logging.getLogger(__name__)
 
 
 class Settings(BaseSettings):
@@ -8,6 +12,7 @@ class Settings(BaseSettings):
     child_task_queue: str = "child-queue"
     basic_auth_user: str = "admin"
     basic_auth_password: str = "changeme"
+    log_level: str = "INFO"
 
 
 settings = Settings()

@@ -4,6 +4,7 @@ x-app: &app
     TEMPORAL_ADDRESS: temporal:7233
     BASIC_AUTH_USER: ${BASIC_AUTH_USER:-admin}
     BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD:-changeme}
+    LOG_LEVEL: ${LOG_LEVEL:-INFO}
   depends_on:
     temporal:
       condition: service_healthy

@@ -15,6 +15,9 @@ docker compose up --build
 - API docs: http://localhost:8000/docs
 - Temporal UI: http://localhost:8233
 
+Application logs are written to stderr with timestamps, severity, and logger names.
+Set `LOG_LEVEL` in `.env` to `DEBUG`, `INFO` (default), `WARNING`, `ERROR`, or `CRITICAL`.
+
 ```bash
 # Triggers Temporal workflows (takes ~4s)
 curl -u admin:changeme -X POST localhost:8000/workflows/run \

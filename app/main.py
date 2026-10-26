@@ -1,3 +1,4 @@
+import logging
 import uuid
 from contextlib import asynccontextmanager
 from dataclasses import asdict
@@ -10,16 +11,27 @@ from temporalio.client import Client
 
 from app.auth import get_current_user
 from app.config import settings
+from app.logging_config import configure_logging
 from app.models import ParentInput
 from app.temporal.workflows import ParentWorkflow
+
+configure_logging(settings.log_level)
+logger = logging.getLogger(__name__)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    logger.info(
+        "Connecting to Temporal at %s (namespace=%s)",
+        settings.temporal_address,
+        settings.temporal_namespace,
+    )
     app.state.temporal = await Client.connect(
         settings.temporal_address, namespace=settings.temporal_namespace
     )
+    logger.info("Connected to Temporal")
     yield
+    logger.info("FastAPI application shutting down")
 
 
 app = FastAPI(title="FastAPI + Temporal demo", lifespan=lifespan)
@@ -36,12 +48,15 @@ class RunRequest(BaseModel):
 async def run_workflows(body: RunRequest, user: CurrentUser) -> dict:
     """Starts the parent workflow (which starts the child one) and waits for the result."""
     client: Client = app.state.temporal
+    workflow_id = f"parent-{uuid.uuid4()}"
+    logger.info("Starting workflow %s for %d items", workflow_id, body.items)
     result = await client.execute_workflow(
         ParentWorkflow.run,
         ParentInput(name=body.name, items=body.items),
-        id=f"parent-{uuid.uuid4()}",
+        id=workflow_id,
         task_queue=settings.parent_task_queue,
     )
+    logger.info("Workflow %s completed", workflow_id)
     return {"requested_by": user, "result": asdict(result)}
 
 

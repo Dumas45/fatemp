@@ -1,3 +1,4 @@
+import logging
 import secrets
 from typing import Annotated
 
@@ -6,6 +7,7 @@ from fastapi.security import HTTPBasic, HTTPBasicCredentials
 
 from app.config import settings
 
+logger = logging.getLogger(__name__)
 security = HTTPBasic()
 
 
@@ -19,6 +21,7 @@ def get_current_user(
         credentials.password.encode(), settings.basic_auth_password.encode()
     )
     if not (user_ok and password_ok):
+        logger.warning("HTTP Basic authentication failed")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid credentials",
