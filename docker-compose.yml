@@ -1,0 +1,36 @@
+x-app: &app
+  build: .
+  environment: &app-env
+    TEMPORAL_ADDRESS: temporal:7233
+    BASIC_AUTH_USER: ${BASIC_AUTH_USER:-admin}
+    BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD:-changeme}
+  depends_on:
+    temporal:
+      condition: service_healthy
+  restart: unless-stopped
+
+services:
+  temporal:
+    image: temporalio/temporal:latest
+    command: server start-dev --ip 0.0.0.0
+    ports:
+      - "7233:7233"
+      - "8233:8233" # Temporal UI
+    healthcheck:
+      test: ["CMD", "temporal", "operator", "cluster", "health", "--address", "127.0.0.1:7233"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    <<: *app
+    ports:
+      - "8000:8000"
+
+  parent-worker:
+    <<: *app
+    command: ["python", "-m", "app.temporal.parent_worker"]
+
+  child-worker:
+    <<: *app
+    command: ["python", "-m", "app.temporal.child_worker"]

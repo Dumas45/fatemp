@@ -1,2 +1,7 @@
 # Data
 /data
+
+# Env
+.venv/
+__pycache__/
+.env
