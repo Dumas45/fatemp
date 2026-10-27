@@ -7,6 +7,6 @@ def create_runtime() -> Runtime:
     """Temporal SDK runtime exposing worker/client metrics for Prometheus."""
     return Runtime(
         telemetry=TelemetryConfig(
-            metrics=PrometheusConfig(bind_address=settings.worker_metrics_address)
+            metrics=PrometheusConfig(bind_address=f"0.0.0.0:{settings.metrics_port}")
         )
     )

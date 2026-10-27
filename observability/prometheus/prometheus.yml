@@ -3,23 +3,26 @@ global:
 
 scrape_configs:
   - job_name: prometheus
+    metrics_path: /metrics
     static_configs:
       - targets: ["localhost:9090"]
 
   - job_name: temporal
     metrics_path: /metrics
     static_configs:
-      - targets: ["temporal:9100"]
+      - targets: ["temporal:9464"]
 
   - job_name: api
     metrics_path: /metrics
     static_configs:
-      - targets: ["api:8000"]
+      - targets: ["api:9464"]
 
   - job_name: parent-worker
+    metrics_path: /metrics
     static_configs:
       - targets: ["parent-worker:9464"]
 
   - job_name: child-worker
+    metrics_path: /metrics
     static_configs:
       - targets: ["child-worker:9464"]

@@ -6,6 +6,7 @@ from datetime import UTC, datetime
 from typing import Annotated
 
 from fastapi import Depends, FastAPI
+from prometheus_client import start_http_server
 from prometheus_fastapi_instrumentator import Instrumentator
 from pydantic import BaseModel, Field
 from temporalio.client import Client
@@ -22,6 +23,9 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Metrics are served on a dedicated port, not on the public API port
+    start_http_server(settings.metrics_port)
+    logger.info("Metrics available on port %d", settings.metrics_port)
     logger.info(
         "Connecting to Temporal at %s (namespace=%s)",
         settings.temporal_address,
@@ -36,7 +40,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(title="FastAPI + Temporal demo", lifespan=lifespan)
-Instrumentator().instrument(app).expose(app, include_in_schema=False)
+Instrumentator().instrument(app)
 
 CurrentUser = Annotated[str, Depends(get_current_user)]
 

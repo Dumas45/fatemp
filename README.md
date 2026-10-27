@@ -23,7 +23,7 @@ docker compose up --build
 `docker compose up` also starts Grafana, Prometheus, Loki and Grafana Alloy. Config lives in [observability/](observability).
 
 - Grafana provisions **Prometheus** (default) and **Loki** datasources, so both are available in *Explore*.
-- Prometheus scrapes the Temporal server (`:9100`), the API (`/metrics`) and both workers (Temporal SDK metrics on `:9464`).
+- Every service (Temporal server, API, both workers) exposes `/metrics` on the same port, `9464` (configurable with `METRICS_PORT` for the app services). The API serves it on this dedicated port, not on the public port 8000. In Kubernetes, name this container port `metrics` so one scrape rule fits every workload.
 - Alloy reads all container logs from the Docker socket and pushes them to Loki, labelled with `compose_service`.
 
 Example queries in Explore: LogQL `{compose_service="api"}`, PromQL `rate(http_requests_total[1m])`.

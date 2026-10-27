@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     basic_auth_user: str = "admin"
     basic_auth_password: str = "changeme"
     log_level: str = "INFO"
-    worker_metrics_address: str = "0.0.0.0:9464"
+    metrics_port: int = 9464
 
 
 settings = Settings()

@@ -13,7 +13,7 @@ x-app: &app
 services:
   temporal:
     image: temporalio/temporal:latest
-    command: server start-dev --ip 0.0.0.0 --metrics-port 9100
+    command: server start-dev --ip 0.0.0.0 --metrics-port 9464
     ports:
       - "7233:7233"
       - "8233:8233" # Temporal UI
